@@ -27,7 +27,7 @@
     "test": "jest",
     "test:build": "jest -c '{}' build",
     "test:coverage": "jest --coverage",
-    "lint": "tslint -p tsconfig.json --type-check -c tslint.json",
+    "lint": "tslint --format stylish -p tsconfig.json --type-check -c tslint.json",
     "preversion": "npm run lint && npm run build && npm run test:build && changelog-verify CHANGELOG.md",
     "version": "version-changelog CHANGELOG.md && changelog-verify CHANGELOG.md && git add CHANGELOG.md",
     "release": "cd build && npm publish",

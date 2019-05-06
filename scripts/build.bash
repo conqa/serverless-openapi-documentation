@@ -11,4 +11,4 @@ rsync -am . ./build  --exclude '*/*' --include '*'
 rsync -am  ./src/* ./build --exclude '*.ts'
 
 # Build typescript
-npx tsc
+./node_modules/.bin/tsc

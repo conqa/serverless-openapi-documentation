@@ -4,7 +4,7 @@
   "description": "Serverless 1.0 plugin to generate OpenAPI V3 documentation from serverless configuration",
   "main": "index.js",
   "engines": {
-    "node": ">=8.10.0",
+    "node": ">=6.0.0",
     "npm": ">=5.6.0"
   },
   "repository": {
@@ -31,7 +31,7 @@
     "preversion": "npm run lint && npm run build && npm run test:build && changelog-verify CHANGELOG.md",
     "version": "version-changelog CHANGELOG.md && changelog-verify CHANGELOG.md && git add CHANGELOG.md",
     "release": "cd build && npm publish",
-    "test:project": "cd test/project && npx sls openapi generate",
+    "test:project": "cd test/project && ./node_modules/.bin/sls openapi generate",
     "test:prepare": "scripts/prepareTests.bash",
     "build:link": "npm run build && cd build && npm link",
     "build:watch": "npm run build && tsc --watch",

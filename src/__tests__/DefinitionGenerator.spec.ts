@@ -1,5 +1,5 @@
 import * as path from 'path';
-import Serverless from 'serverless';
+import * as Serverless from 'serverless';
 import { DefinitionGenerator } from '../DefinitionGenerator';
 
 class ServerlessInterface extends Serverless {

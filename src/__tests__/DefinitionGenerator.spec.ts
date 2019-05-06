@@ -63,7 +63,7 @@ describe('OpenAPI Documentation Generator', () => {
         schema: {
           pattern: '^[-a-z0-9_]+$',
           type: 'string',
-        }
+        },
       },
       {
         allowEmptyValue: false,
@@ -87,9 +87,9 @@ describe('OpenAPI Documentation Generator', () => {
         schema: {
           type: 'string',
         },
-      }
-    ]
+      },
+    ];
 
     expect(actual).toEqual(expected);
-  })
+  });
 });

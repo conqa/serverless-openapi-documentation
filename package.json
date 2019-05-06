@@ -3,6 +3,10 @@
   "version": "1.0.2",
   "description": "Serverless 1.0 plugin to generate OpenAPI V3 documentation from serverless configuration",
   "main": "index.js",
+  "engines": {
+    "node": ">=8.10.0",
+    "npm": ">=5.6.0"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/conqa/serverless-openapi-documentation.git"
@@ -24,13 +28,13 @@
     "test:build": "jest -c '{}' build",
     "test:coverage": "jest --coverage",
     "lint": "tslint -p tsconfig.json --type-check -c tslint.json",
-    "preversion": "yarn lint && yarn build && yarn test:build && changelog-verify CHANGELOG.md",
+    "preversion": "npm run lint && npm run build && npm run test:build && changelog-verify CHANGELOG.md",
     "version": "version-changelog CHANGELOG.md && changelog-verify CHANGELOG.md && git add CHANGELOG.md",
     "release": "cd build && npm publish",
-    "test:project": "cd test/project && yarn sls openapi generate",
+    "test:project": "cd test/project && npx sls openapi generate",
     "test:prepare": "scripts/prepareTests.bash",
-    "build:link": "yarn build && cd build && yarn link",
-    "build:watch": "yarn build && tsc --watch",
+    "build:link": "npm run build && cd build && npm link",
+    "build:watch": "npm run build && tsc --watch",
     "build": "scripts/build.bash"
   },
   "devDependencies": {

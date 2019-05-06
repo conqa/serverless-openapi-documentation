@@ -143,7 +143,7 @@ components:
 info:
   title: ''
   description: ''
-  version: 85bfbe6d-64b2-45e3-b74e-d26ba8dfa3bb
+  version: 7dfbfade-1f91-4069-bc4d-fa62f3ca71c8
 paths:
   /create:
     post:

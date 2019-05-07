@@ -8,7 +8,6 @@ script:
   - npm run lint
   - npm run build
   - npm run test:build
-  - DEBUG=true npm run test:coverage
 
 before_deploy:
   - echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" > ~/.npmrc

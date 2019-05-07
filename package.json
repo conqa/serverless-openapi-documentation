@@ -24,9 +24,9 @@
   ],
   "license": "MIT",
   "scripts": {
-    "test": "jest",
+    "test": "jest -c ./jest.config.js",
     "test:build": "jest -c '{ \"testRegex\": \".spec.js$\"}' build",
-    "test:coverage": "jest --coverage",
+    "test:coverage": "jest -c ./jest.config.js --coverage",
     "lint": "tslint --format stylish -p tsconfig.json --type-check -c tslint.json",
     "preversion": "npm run lint && npm run build && npm run test:build && changelog-verify CHANGELOG.md",
     "version": "version-changelog CHANGELOG.md && changelog-verify CHANGELOG.md && git add CHANGELOG.md",

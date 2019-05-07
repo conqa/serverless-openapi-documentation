@@ -6,5 +6,10 @@ module.exports = {
     "/node_modules/",
     "/build/",
     "d.ts"
-  ]
+  ],
+  "coverageThreshold": {
+    "global": {
+      "lines": 5
+    },
+  }
 }

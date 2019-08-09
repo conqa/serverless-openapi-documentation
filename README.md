@@ -330,7 +330,7 @@ Next you need to add the plugin to the `plugins` section of your `serverless.yml
 
 ```yml
 plugins:
-  - @conqa/serverless-openapi-documentation
+  - "@conqa/serverless-openapi-documentation"
 ```
 
 You can confirm the plugin is correctly installed by running:

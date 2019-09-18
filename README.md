@@ -246,6 +246,8 @@ cookieParams:
 
 #### `requestModels`
 
+**You must also define `requestBody`, or the request models won't be shown.**
+
 The `requestModels` property allows you to define models for the HTTP Request of the function event. You can define a different model for each different `Content-Type`. You can define a reference to the relevant request model named in the `models` section of your configuration (see [Defining Models](#models) section).
 
 ```yml

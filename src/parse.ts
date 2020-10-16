@@ -14,9 +14,12 @@ function updateReferences(schema: JSONSchema7): JSONSchema7 {
   const cloned = _.cloneDeep(schema);
 
   if (cloned.$ref) {
+    let referencedValue = cloned.$ref
+      .replace("#/definitions", "#/components/schemas") // json schema syntax
+      .replace(/{{model: (\w+)}}/, "#/components/schemas/$1"); // swagger 2.0 syntax
     return {
       ...cloned,
-      $ref: cloned.$ref.replace("#/definitions", "#/components/schemas")
+      $ref: referencedValue
     };
   }
 

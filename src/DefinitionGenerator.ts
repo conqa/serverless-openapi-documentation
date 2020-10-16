@@ -68,7 +68,7 @@ export class DefinitionGenerator {
     }
 
     this.definition.components.schemas = await parseModels(models, this.root);
-
+    this.config.models = _.values(this.definition.components.schemas);
     return this;
   }
 
@@ -97,7 +97,7 @@ export class DefinitionGenerator {
     // loop through function configurations
     for (const funcConfig of config) {
       // loop through http events
-      for (const httpEvent of this.getHttpEvents(funcConfig.events)) {
+      for (const httpEvent of this.getHttpEvents(funcConfig.events || [])) {
         const httpEventConfig = httpEvent.http;
 
         if (httpEventConfig.documentation) {
@@ -352,7 +352,7 @@ export class DefinitionGenerator {
     return responses;
   }
 
-  private getResponseContent(response) {
+  private getResponseContent(response ={}) {
     const content = {};
 
     for (const responseKey of Object.keys(response)) {

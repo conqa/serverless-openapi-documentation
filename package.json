@@ -1,6 +1,6 @@
 {
-  "name": "@conqa/serverless-openapi-documentation",
-  "version": "1.1.0",
+  "name": "@martinsson/serverless-openapi-documentation",
+  "version": "1.2.4",
   "description": "Serverless 1.0 plugin to generate OpenAPI V3 documentation from serverless configuration",
   "main": "index.js",
   "engines": {
@@ -9,9 +9,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/conqa/serverless-openapi-documentation.git"
+    "url": "https://github.com/martinsson/serverless-openapi-documentation.git"
   },
-  "bugs": "https://github.com/conqa/serverless-openapi-documentation/issues",
+  "bugs": "https://github.com/martinsson/serverless-openapi-documentation/issues",
   "author": "Abilio Henrique <abilio.henrique@temando.com>",
   "contributors": [
     "Abilio Henrique <abilio.henrique@temando.com>",

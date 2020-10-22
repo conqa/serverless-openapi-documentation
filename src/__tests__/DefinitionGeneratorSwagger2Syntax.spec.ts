@@ -14,7 +14,7 @@ class ServerlessInterface extends Serverless {
 describe("OpenAPI Documentation Generator", () => {
   let sls: ServerlessInterface;
 
-  const servicePath = path.join(__dirname, "../../test/project");
+  const servicePath = path.join(__dirname, "../../test/project-swagger-2.0");
 
   beforeEach(async () => {
     const serverlessYamlPath = path.join(servicePath, "./serverless.yml");
@@ -37,15 +37,7 @@ describe("OpenAPI Documentation Generator", () => {
     }
   });
 
-  it("Generates OpenAPI document", async () => {
-    const docGen = new DefinitionGenerator(
-      sls.service.custom.documentation,
-      servicePath
-    );
-    expect(docGen).not.toBeNull();
-  });
-
-  it("adds paths to OpenAPI output from function configuration", async () => {
+  it('should allow path to be preceded with a slash without duplicating the slash', async () => {
     const docGen = new DefinitionGenerator(
       sls.service.custom.documentation,
       servicePath
@@ -61,46 +53,12 @@ describe("OpenAPI Documentation Generator", () => {
 
     docGen.readFunctions(funcConfigs);
 
-    // get the parameters from the `/create POST' endpoint
-    const actual =
-      docGen.definition.paths["/create/{username}"].post.parameters;
-    const expected = [
-      {
-        description: "The username for a user to create",
-        in: "path",
-        name: "username",
-        required: true,
-        schema: {
-          pattern: "^[-a-z0-9_]+$",
-          type: "string"
-        }
-      },
-      {
-        allowEmptyValue: false,
-        description: `The user's Membership Type`,
-        in: "query",
-        name: "membershipType",
-        required: false,
-        schema: {
-          enum: ["premium", "standard"],
-          type: "string"
-        }
-      },
-      {
-        description: "A Session ID variable",
-        in: "cookie",
-        name: "SessionId",
-        required: false,
-        schema: {
-          type: "string"
-        }
-      }
-    ];
-
-    expect(actual).toEqual(expected);
+    let expected = [ "/api/company-service/companies", "/api/company-service/companies/"];
+    expect(Object.keys(docGen.definition.paths)).toEqual(expected)
   });
 
-  it("adds paths to OpenAPI output from function configuration", async () => {
+
+  it("parses the requestModels", async () => {
     const docGen = new DefinitionGenerator(
       sls.service.custom.documentation,
       servicePath
@@ -111,27 +69,44 @@ describe("OpenAPI Documentation Generator", () => {
 
     const funcConfigs = sls.service.getAllFunctions().map(functionName => {
       const func = sls.service.getFunction(functionName);
-      return _.merge({_functionName: functionName}, func);
+      return _.merge({ _functionName: functionName }, func);
     });
 
     docGen.readFunctions(funcConfigs);
 
-    // get the parameters from the `/create POST' endpoint
-    const actual =
-      docGen.definition.paths["/create/{username}"].post.requestBody;
-    const expected = {
-      content: {
-        'application/json': {
-            schema: {
-                '$ref':
-                  '#/components/schemas/PutDocumentRequest'
-              }
-          }
-      },
-      description: "A user information object"
-    };
 
-      expect(actual).toEqual(expected);
-    }
-  )
+    let expected = {
+      get: {
+        operationId: "company-getall",
+        parameters: [
+          {
+            description: "Authentication tokens",
+            in: "header",
+            name: "X-AccessToken",
+            required: false,
+            schema: {
+              type: "string"
+            }
+          }
+        ],
+        responses: {
+          200: {
+            content: {
+              "application/json": {
+                schema: {
+                  $ref: "#/components/schemas/CompaniesDTO"
+                }
+              }
+            },
+            description: "Status 200 Response"
+          }
+        },
+        summary: "Get all companies",
+        tags: [
+          "CompanyAPI"
+        ]
+      }
+    };
+    expect(docGen.definition.paths['/api/company-service/companies']).toEqual(expected)
+  });
 });

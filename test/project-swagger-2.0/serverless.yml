@@ -1,0 +1,171 @@
+service: company-service
+
+# You can pin your service to only deploy with a specific Serverless version
+# Check out our docs for more details
+# frameworkVersion: "=X.X.X"
+frameworkVersion: ">=1.28.0 <2.0.0"
+provider:
+  name: aws
+  runtime: nodejs6.10
+
+# Plugins
+plugins:
+  - "@conqa/serverless-openapi-documentation"
+
+custom:
+
+  documentation:
+    api:
+      info:
+        version: '2'
+        title: 'Company Service'
+        description: 'This service manage companies and its rights'
+      tags:
+        - CompanyAPI
+
+    models:
+      -
+        name: UserDTO
+        contentType: "application/json"
+        schema:
+          type: object
+          properties:
+            companyName:
+              type: string
+            firstName:
+              type: string
+            surname:
+              type: string
+            email:
+              type: string
+      -
+        name: CompanyDTO
+        contentType: "application/json"
+        schema:
+          type: object
+          properties:
+            name:
+              type: string
+            client:
+              $ref: "{{model: UserDTO}}"
+            notes:
+              type: string
+      -
+        name: CompaniesDTO
+        contentType: "application/json"
+        schema:
+          type: object
+          properties:
+            companies:
+              type: array
+              items:
+                $ref: "{{model: CompanyDTO}}"
+
+functions:
+
+  company-getall:
+    handler: bin/functions/company-getall
+    package:
+      include:
+        - ./bin/functions/company-getall
+    memorySize: 128
+    events:
+      - http:
+          path: /api/company-service/companies
+          method: get
+          documentation:
+            summary: Get all companies
+            requestHeaders:
+              - name: "X-AccessToken"
+                description: "Authentication tokens"
+                schema:
+                  type: string
+            methodResponses:
+              -
+                statusCode: '200'
+                responseModels:
+                  "application/json": CompaniesDTO
+            tags:
+              - CompanyAPI
+
+  company-get:
+    handler: bin/functions/company-post
+    memorySize: 128
+    events:
+      - http:
+          path: /api/company-service/companies/
+          method: post
+          documentation:
+            summary: Get all companies
+            requestHeaders:
+              - name: "X-AccessToken"
+                description: "Authentication tokens"
+                schema:
+                  type: string
+            requestModels:
+              "application/json": CompanyDTO
+            methodResponses:
+              -
+                statusCode: '200'
+                responseModels:
+                  "application/json": CompaniesDTO
+            tags:
+              - CompanyAPI
+
+
+stepFunctions:
+  stateMachines:
+    generation-state-machine:
+      name: mylegal-${self:service}-${self:provider.stage}-generation-state-machine
+      # The API doc is not generated in gaservice-api.yml because serverless-aws-documentation plugin doesn't support state machine
+      events:
+        - http:
+            path: /api/ga-service/doc-generation
+            method: post
+            documentation:
+              summary: Trigger the generation of a doc for the General Assembly
+              requestModels:
+                "application/json": DocGenerationDTO
+              methodResponses:
+                - statusCode: '200'
+                  responseModels:
+                    "application/json": StateMachineResponseDTO
+              tags:
+                - GAAPI
+          authorizer:
+            authorizer:
+              type: COGNITO_USER_POOLS
+              authorizerId:
+                Ref: ApiGatewayAuthorizer
+      definition:
+        StartAt: get-doc-info
+        States:
+          get-doc-info:
+            Type: Task
+            Parameters:
+              "input.$": "$"
+              "executionId.$": "$$.Execution.Id"
+            TimeoutSeconds: 120
+            Resource:
+              Fn::GetAtt: [ StepDashgetDashdocDashinfoLambdaFunction, Arn ]
+            Next: create-docs
+          create-docs:
+            Type: "Map"
+            ItemsPath: "$.generationsParams"
+            MaxConcurrency: 5
+            Parameters:
+              "ga.$": "$.ga"
+              "company.$": "$.company"
+              "shareholders.$": "$.shareholders"
+              "shareholder.$": "$$.Map.Item.Value.shareholder"
+              "generation.$": "$$.Map.Item.Value.generation"
+            Iterator:
+              StartAt: create-doc
+              States:
+                create-doc:
+                  Type: Task
+                  TimeoutSeconds: 120
+                  Resource:
+                    Fn::GetAtt: [ StepDashcreateDashdocLambdaFunction, Arn ]
+                  End: true
+            End: true

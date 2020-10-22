@@ -4,13 +4,7 @@ import { validateSync as openApiValidatorSync } from "swagger2openapi/validate";
 import * as uuid from "uuid";
 
 import { parseModels } from "./parse";
-import {
-  Definition,
-  DefinitionConfig,
-  Operation,
-  ParameterConfig,
-  ServerlessFunctionConfig
-} from "./types";
+import { Definition, DefinitionConfig, Model, Operation, ParameterConfig, ServerlessFunctionConfig } from "./types";
 import { cleanSchema } from "./utils";
 
 export class DefinitionGenerator {
@@ -68,6 +62,11 @@ export class DefinitionGenerator {
     }
 
     this.definition.components.schemas = await parseModels(models, this.root);
+    this.config.models = _.map(this.definition.components.schemas, createModel);
+
+    function createModel(value, key): Model {
+      return {name: key, contentType: 'application/json', schema: value};
+    }
 
     return this;
   }
@@ -94,16 +93,20 @@ export class DefinitionGenerator {
    * @param config Add
    */
   public readFunctions(config: Array<ServerlessFunctionConfig>): void {
-    // loop through function configurations
+    function normalizePath(path: string) {
+      return path.startsWith('/')? path : '/'+path;
+    }
+
+// loop through function configurations
     for (const funcConfig of config) {
       // loop through http events
-      for (const httpEvent of this.getHttpEvents(funcConfig.events)) {
+      for (const httpEvent of this.getHttpEvents(funcConfig.events || [])) {
         const httpEventConfig = httpEvent.http;
 
         if (httpEventConfig.documentation) {
           // Build OpenAPI path configuration structure for each method
           const pathConfig = {
-            [`/${httpEventConfig.path}`]: {
+            [normalizePath(httpEventConfig.path)]: {
               [httpEventConfig.method.toLowerCase()]: this.getOperationFromConfig(
                 funcConfig._functionName,
                 httpEventConfig.documentation
@@ -149,7 +152,7 @@ export class DefinitionGenerator {
       operationObj.deprecated = true;
     }
 
-    if (documentationConfig.requestBody) {
+    if (documentationConfig.requestBody || documentationConfig.requestModels) {
       operationObj.requestBody = this.getRequestBodiesFromConfig(
         documentationConfig
       );
@@ -255,7 +258,7 @@ export class DefinitionGenerator {
     }
 
     // Does this event have a request model?
-    if (documentationConfig.requestModels) {
+    if (documentationConfig.requestModels) { // TODO remove this if statement
       // For each request model type (Sorted by "Content-Type")
       for (const requestModelType of Object.keys(
         documentationConfig.requestModels
@@ -352,7 +355,7 @@ export class DefinitionGenerator {
     return responses;
   }
 
-  private getResponseContent(response) {
+  private getResponseContent(response ={}) {
     const content = {};
 
     for (const responseKey of Object.keys(response)) {

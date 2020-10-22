@@ -3,11 +3,11 @@ import { OpenAPIV3 } from "openapi-types";
 
 export interface Model {
   name: string;
-  description: string;
+  description?: string;
   contentType: string;
   schema: string | JSONSchema7;
-  examples: Array<any>;
-  example: object;
+  examples?: Array<any>;
+  example?: object;
 }
 
 export interface DefinitionConfig {

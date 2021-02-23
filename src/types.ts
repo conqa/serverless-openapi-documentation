@@ -13,6 +13,7 @@ export interface Model {
 export interface DefinitionConfig {
   title: string;
   description: string;
+  tags: Array<OpenAPIV3.TagObject>
   version?: string;
   securitySchemes: OpenAPIV3.SecuritySchemeObject;
   security: Array<OpenAPIV3.SecurityRequirementObject>;

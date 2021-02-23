@@ -43,12 +43,14 @@ export class DefinitionGenerator {
       models,
       security,
       securitySchemes,
-      servers
+      servers,
+      tags = []
     } = this.config;
 
     _.merge(this.definition, {
       openapi: this.version,
       info: { title, description, version },
+      tags,
       paths: {},
       components: {
         schemas: {}

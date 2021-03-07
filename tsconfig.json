@@ -8,13 +8,8 @@
     "declaration": true,
     "noUnusedLocals": true,
     "downlevelIteration": true,
-    "lib": [
-      "es6",
-      "es7",
-      "dom",
-      "esnext.asynciterable"
-    ]
+    "lib": ["es6", "es7", "dom", "esnext.asynciterable"]
   },
-  "include": [ "src/**/*" ],
-  "exclude": [ "node_modules" ]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
 }

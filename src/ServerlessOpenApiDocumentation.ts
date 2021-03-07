@@ -1,12 +1,12 @@
 import chalk from 'chalk';
 import * as fs from 'fs';
 import * as YAML from 'js-yaml';
-import _ = require('lodash');
 import * as Serverless from 'serverless';
 import { inspect } from 'util';
 
 import { DefinitionGenerator } from './DefinitionGenerator';
-import { Format, DefinitionConfig, DefinitionType, ILog } from './types';
+import { DefinitionConfig, DefinitionType, Format, ILog } from './types';
+import _ = require('lodash');
 
 interface Options {
   indent: number;
@@ -49,7 +49,7 @@ export class ServerlessOpenApiDocumentation {
    * @param serverless
    * @param options
    */
-  public constructor(serverless: FullServerless, options) {
+  public constructor(serverless: FullServerless) {
     // pull the serverless instance into our class vars
     this.serverless = serverless;
 
@@ -96,15 +96,20 @@ export class ServerlessOpenApiDocumentation {
     this.customVars = this.serverless.variables.service.custom;
     this.log(chalk.bold.underline('OpenAPI v3 Documentation Generator\n\n'));
     // Instantiate DocumentGenerator
-    const generator = new DefinitionGenerator(this.customVars.documentation, this.serverless.config.servicePath);
+    const generator = new DefinitionGenerator(
+      this.customVars.documentation,
+      this.serverless.config.servicePath,
+    );
 
     await generator.parse();
 
     // Map function configurations
-    const funcConfigs = this.serverless.service.getAllFunctions().map((functionName) => {
-      const func = this.serverless.service.getFunction(functionName);
-      return _.merge({ _functionName: functionName }, func);
-    });
+    const funcConfigs = this.serverless.service
+      .getAllFunctions()
+      .map(functionName => {
+        const func = this.serverless.service.getFunction(functionName);
+        return _.merge({ _functionName: functionName }, func);
+      });
 
     // Add Paths to OpenAPI Output from Function Configuration
     generator.readFunctions(funcConfigs);
@@ -112,15 +117,33 @@ export class ServerlessOpenApiDocumentation {
     // Process CLI Input options
     const config = this.processCliInput();
 
-    this.log(`${chalk.bold.yellow('[VALIDATION]')} Validating OpenAPI generated output\n`);
+    this.log(
+      `${chalk.bold.yellow(
+        '[VALIDATION]',
+      )} Validating OpenAPI generated output\n`,
+    );
 
     const validation = generator.validate();
 
     if (validation.valid) {
-      this.log(`${chalk.bold.green('[VALIDATION]')} OpenAPI valid: ${chalk.bold.green('true')}\n\n`);
+      this.log(
+        `${chalk.bold.green('[VALIDATION]')} OpenAPI valid: ${chalk.bold.green(
+          'true',
+        )}\n\n`,
+      );
     } else {
-      this.log(`${chalk.bold.red('[VALIDATION]')} Failed to validate OpenAPI document: \n\n`);
-      this.log(`${chalk.bold.green('Context:')} ${JSON.stringify(validation.context, null, 2)}\n`);
+      this.log(
+        `${chalk.bold.red(
+          '[VALIDATION]',
+        )} Failed to validate OpenAPI document: \n\n`,
+      );
+      this.log(
+        `${chalk.bold.green('Context:')} ${JSON.stringify(
+          validation.context,
+          null,
+          2,
+        )}\n`,
+      );
 
       if (typeof validation.error === 'string') {
         this.log(`${validation.error}\n\n`);
@@ -152,7 +175,9 @@ export class ServerlessOpenApiDocumentation {
 
     fs.writeFileSync(config.file, output);
 
-    this.log(`${chalk.bold.green('[OUTPUT]')} To "${chalk.bold.red(config.file)}"\n`);
+    this.log(
+      `${chalk.bold.green('[OUTPUT]')} To "${chalk.bold.red(config.file)}"\n`,
+    );
   }
 
   /**
@@ -167,19 +192,24 @@ export class ServerlessOpenApiDocumentation {
     };
 
     config.indent = this.serverless.processedInput.options.indent || 2;
-    config.format = this.serverless.processedInput.options.format || Format.yaml;
+    config.format =
+      this.serverless.processedInput.options.format || Format.yaml;
 
     if ([Format.yaml, Format.json].indexOf(config.format) < 0) {
-      throw new Error('Invalid Output Format Specified - must be one of "yaml" or "json"');
+      throw new Error(
+        'Invalid Output Format Specified - must be one of "yaml" or "json"',
+      );
     }
 
-    config.file = this.serverless.processedInput.options.output || (config.format === 'yaml' ? 'openapi.yml' : 'openapi.json');
+    config.file =
+      this.serverless.processedInput.options.output ||
+      (config.format === 'yaml' ? 'openapi.yml' : 'openapi.json');
 
     this.log(
       `${chalk.bold.green('[OPTIONS]')}`,
       `format: "${chalk.bold.red(config.format)}",`,
       `output file: "${chalk.bold.red(config.file)}",`,
-      `indentation: "${chalk.bold.red(String(config.indent))}"\n\n`
+      `indentation: "${chalk.bold.red(String(config.indent))}"\n\n`,
     );
 
     return config;

@@ -1,17 +1,17 @@
 {
   "name": "@skybrasil/serverless-openapi-documentation",
-  "version": "1.0.0",
+  "version": "1.0.4",
   "description": "Serverless plugin to generate Swagger (OpenAPI V3) documentation from serverless configuration",
-  "main": "index.js",
+  "main": "build/index.js",
   "engines": {
     "node": ">=6.0.0",
     "npm": ">=3.8.6"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/conqa/serverless-openapi-documentation.git"
+    "url": "https://github.com/MozartLino/serverless-openapi-documentation.git"
   },
-  "bugs": "https://github.com/conqa/serverless-openapi-documentation/issues",
+  "bugs": "https://github.com/MozartLino/serverless-openapi-documentation/issues",
   "author": "Ricardo Lino",
   "contributors": [],
   "keywords": [
@@ -33,7 +33,8 @@
     "test:prepare": "scripts/prepareTests.bash",
     "build:link": "npm run build && cd build && npm link",
     "build:watch": "npm run build && tsc --watch",
-    "build": "scripts/build.bash"
+    "build": "scripts/build.bash",
+    "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "devDependencies": {
     "@types/bluebird": "^3.5.8",
@@ -46,12 +47,12 @@
     "@types/node": "^8.10.48",
     "@types/serverless": "^1.18.2",
     "@types/uuid": "^3.4.4",
-    "@typescript-eslint/eslint-plugin": "^1.7.0",
-    "@typescript-eslint/parser": "^1.7.0",
+    "@typescript-eslint/eslint-plugin": "^4.8.2",
+    "@typescript-eslint/parser": "^4.8.2",
     "changelog-verify": "^1.0.4",
-    "eslint": "^5.16.0",
-    "eslint-config-prettier": "^4.2.0",
-    "eslint-plugin-prettier": "^3.0.1",
+    "coveralls": "^3.1.0",
+    "eslint": "^7.14.0",
+    "eslint-plugin-import": "^2.22.1",
     "jest": "^24.8.0",
     "openapi-types": "^1.3.4",
     "prettier": "^1.17.0",
@@ -70,5 +71,8 @@
     "lodash": "^4.17.11",
     "swagger2openapi": "^2.5.0",
     "uuid": "^3.1.0"
+  },
+  "prettier": {
+    "singleQuote": true
   }
 }

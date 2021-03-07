@@ -1,8 +1,7 @@
 {
-	"extends":[
-    "tslint-config-temando"
-  ],
+  "extends": ["tslint-config-temando"],
   "rules": {
-    "no-implicit-dependencies": false
+    "no-implicit-dependencies": false,
+    "@typescript-eslint/no-explicit-any": "off"
   }
 }

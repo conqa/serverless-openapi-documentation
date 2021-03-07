@@ -9,6 +9,8 @@ script:
   - npm run build
   - npm run test:build
 
+after_success: test -z true || npm run coverage
+
 before_deploy:
   - echo "//registry.npmjs.org/:_authToken=\${NPM_TOKEN}" > ~/.npmrc
 

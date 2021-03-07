@@ -1,7 +1,7 @@
-import _ = require("lodash");
-import * as path from "path";
-import * as Serverless from "serverless";
-import { DefinitionGenerator } from "../DefinitionGenerator";
+import * as path from 'path';
+import * as Serverless from 'serverless';
+import { DefinitionGenerator } from '../DefinitionGenerator';
+import _ = require('lodash');
 
 class ServerlessInterface extends Serverless {
   public service: any = {};
@@ -11,44 +11,44 @@ class ServerlessInterface extends Serverless {
   public variables: any = {};
 }
 
-describe("OpenAPI Documentation Generator", () => {
+describe('OpenAPI Documentation Generator', () => {
   let sls: ServerlessInterface;
 
-  const servicePath = path.join(__dirname, "../../test/project");
+  const servicePath = path.join(__dirname, '../../test/project');
 
   beforeEach(async () => {
-    const serverlessYamlPath = path.join(servicePath, "./serverless.yml");
+    const serverlessYamlPath = path.join(servicePath, './serverless.yml');
     sls = new Serverless();
 
     sls.config.update({
-      servicePath
+      servicePath,
     });
 
     const config = await sls.yamlParser.parse(serverlessYamlPath);
-    sls.pluginManager.cliOptions = { stage: "dev" };
+    sls.pluginManager.cliOptions = { stage: 'dev' };
 
     await sls.service.load(config);
     await sls.variables.populateService();
 
-    if (!("documentation" in sls.service.custom)) {
+    if (!('documentation' in sls.service.custom)) {
       throw new Error(
-        'Cannot find "documentation" in custom section of "serverless.yml"'
+        'Cannot find "documentation" in custom section of "serverless.yml"',
       );
     }
   });
 
-  it("Generates OpenAPI document", async () => {
+  it('Generates OpenAPI document', async () => {
     const docGen = new DefinitionGenerator(
       sls.service.custom.documentation,
-      servicePath
+      servicePath,
     );
     expect(docGen).not.toBeNull();
   });
 
-  it("adds paths to OpenAPI output from function configuration", async () => {
+  it('adds paths to OpenAPI output from function configuration', async () => {
     const docGen = new DefinitionGenerator(
       sls.service.custom.documentation,
-      servicePath
+      servicePath,
     );
 
     // implementation copied from ServerlessOpenApiDocumentation.ts
@@ -63,38 +63,38 @@ describe("OpenAPI Documentation Generator", () => {
 
     // get the parameters from the `/create POST' endpoint
     const actual =
-      docGen.definition.paths["/create/{username}"].post.parameters;
+      docGen.definition.paths['/create/{username}'].post.parameters;
     const expected = [
       {
-        description: "The username for a user to create",
-        in: "path",
-        name: "username",
+        description: 'The username for a user to create',
+        in: 'path',
+        name: 'username',
         required: true,
         schema: {
-          pattern: "^[-a-z0-9_]+$",
-          type: "string"
-        }
+          pattern: '^[-a-z0-9_]+$',
+          type: 'string',
+        },
       },
       {
         allowEmptyValue: false,
-        description: `The user's Membership Type`,
-        in: "query",
-        name: "membershipType",
+        description: 'The user\'s Membership Type',
+        in: 'query',
+        name: 'membershipType',
         required: false,
         schema: {
-          enum: ["premium", "standard"],
-          type: "string"
-        }
+          enum: ['premium', 'standard'],
+          type: 'string',
+        },
       },
       {
-        description: "A Session ID variable",
-        in: "cookie",
-        name: "SessionId",
+        description: 'A Session ID variable',
+        in: 'cookie',
+        name: 'SessionId',
         required: false,
         schema: {
-          type: "string"
-        }
-      }
+          type: 'string',
+        },
+      },
     ];
 
     expect(actual).toEqual(expected);

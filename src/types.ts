@@ -1,5 +1,5 @@
-import { JSONSchema7 } from "json-schema";
-import { OpenAPIV3 } from "openapi-types";
+import { JSONSchema7 } from 'json-schema';
+import { OpenAPIV3 } from 'openapi-types';
 
 export interface Model {
   name: string;
@@ -7,7 +7,7 @@ export interface Model {
   contentType: string;
   schema: string | JSONSchema7;
   examples: Array<any>;
-  example: object;
+  example: any;
 }
 
 export interface DefinitionConfig {
@@ -21,8 +21,8 @@ export interface DefinitionConfig {
 }
 
 export enum Format {
-  yaml = "yaml",
-  json = "json"
+  yaml = 'yaml',
+  json = 'json'
 }
 
 export interface DefinitionType {
@@ -35,8 +35,25 @@ export interface ServerlessFunctionConfig {
   _functionName: string;
   handler: string;
   description?: string;
-  environment?: object;
+  environment?: any;
   events?: Array<any>;
+}
+
+// @see https://github.com/OAI/OpenAPI-Specification/blob/3.0.0/versions/3.0.0.md#parameterObject
+export interface ParameterConfig {
+  name: string;
+  in: 'path' | 'query' | 'header' | 'cookie';
+  description: string;
+  required?: boolean;
+  schema?: any;
+  deprecated?: boolean;
+  allowEmptyValue?: boolean;
+  style?: 'form' | 'simple';
+  explode?: boolean;
+  allowReserved?: boolean;
+  example?: any;
+  examples?: Array<any>;
+  content?: Map<string, any>;
 }
 
 // TODO: We could use another TS based OpenAPI project to get type information
@@ -58,24 +75,6 @@ export interface Operation {
   security?: Array<any>;
   servers?: Array<any>;
 }
-
-// @see https://github.com/OAI/OpenAPI-Specification/blob/3.0.0/versions/3.0.0.md#parameterObject
-export interface ParameterConfig {
-  name: string;
-  in: "path" | "query" | "header" | "cookie";
-  description: string;
-  required?: boolean;
-  schema?: object;
-  deprecated?: boolean;
-  allowEmptyValue?: boolean;
-  style?: "form" | "simple";
-  explode?: boolean;
-  allowReserved?: boolean;
-  example?: any;
-  examples?: Array<any>;
-  content?: Map<string, any>;
-}
-
 // FIXME:
 export interface Definition {
   openapi: string;

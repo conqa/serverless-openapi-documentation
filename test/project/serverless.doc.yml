@@ -1,7 +1,7 @@
 documentation:
   version: "v1.0.0"
   title: "Site API"
-  description: ${file(serverless.doc.description.yml):description}
+  description: any description
   authorization: Bearer <token>
   securitySchemes:
     bearerAuth:

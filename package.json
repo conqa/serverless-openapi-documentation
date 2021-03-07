@@ -1,6 +1,6 @@
 {
   "name": "@skybrasil/serverless-openapi-documentation",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Serverless plugin to generate Swagger (OpenAPI V3) documentation from serverless configuration",
   "main": "build/index.js",
   "engines": {
